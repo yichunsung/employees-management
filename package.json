@@ -1,0 +1,52 @@
+{
+  "name": "employees-management",
+  "version": "0.1.0",
+  "description": "employees management system",
+  "main": "app.js",
+  "babel": {
+    "presets": [
+      "env",
+      "vue"
+    ]
+  },
+  "scripts": {
+    "watch": "webpack --mode development --watch",
+    "build": "webpack --mode development",
+    "deploy": "webpack --mode production",
+    "server-start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yichunsung/employees-management.git"
+  },
+  "keywords": [
+    "vue",
+    "node"
+  ],
+  "author": "Yichun Sung",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yichunsung/employees-management/issues"
+  },
+  "homepage": "https://github.com/yichunsung/employees-management#readme",
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.5",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-vue": "^2.0.2",
+    "css-loader": "^1.0.1",
+    "file-loader": "^3.0.1",
+    "vue-loader": "^15.6.4",
+    "vue-style-loader": "^4.1.2",
+    "vue-template-compiler": "^2.6.6",
+    "webpack": "^4.29.5",
+    "webpack-cli": "^3.2.3"
+  },
+  "dependencies": {
+    "express": "^4.16.4",
+    "request": "^2.88.0",
+    "v2-datepicker": "^3.1.1",
+    "vue": "^2.6.6",
+    "vue-router": "^3.0.2"
+  }
+}

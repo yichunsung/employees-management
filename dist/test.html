@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title> test </title>
+</head>
+<body>
+	<h1>Test</h1>
+	
+	<script type="text/javascript">
+		function ajax(method, src, args, callback){
+			    let req=new XMLHttpRequest();
+			      if(method.toLowerCase()=="post"){
+			        req.open(method, src);
+			        req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+			        req.setRequestHeader("Access-Control-Allow-Origin", "*");
+			        req.onload=callback;
+			        req.send(args);
+			      }else{
+			        req.open(method, src+"?"+args);
+			        req.onload=callback;
+			        req.send();
+			      }
+			};
+		function getToken(){
+			//let _self = this;
+			let url = "https://oapi.dingtalk.com/gettoken"
+			
+			let corpid = 'dingac8sxofjiifrelz7';
+			let SSOsecret = "3vJmsSV6624tmHyCc0SfdIgr0BXiWCdDlJEylPjPIOh_eX47WWk8OciJWeX0TLpR";
+
+			let args = "appkey="+corpid+"&appsecret="+SSOsecret;
+			
+			//let url = 'https://api.github.com/repos/'+_self.owner+"/"+_self.repo+"/readme";
+			
+
+			ajax('get', url, args, function(){
+				
+				let tokenData = JSON.parse(this.responseText);
+				if(!tokenData){
+	    			dataErr();
+	    		}else{
+	    			console.log(tokenData);
+	    			
+	    			
+	    		}
+			})
+		};
+		window.addEventListener('load', function(){
+			getToken();
+		});
+
+	</script>
+</body>
+</html>
