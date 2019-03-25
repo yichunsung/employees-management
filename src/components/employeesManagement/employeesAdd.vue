@@ -81,7 +81,7 @@
 					if(!tokenData){
 		    			dataErr();
 		    		}else{
-		    			console.log(tokenData);
+		    			//console.log(tokenData);
 		    			_self.token = tokenData.access_token;
 		    			
 		    		}

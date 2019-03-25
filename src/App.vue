@@ -6,7 +6,7 @@
     <nav class="nav-style">
       <router-link class="link" to="/">首頁</router-link> 
       <router-link class="link" to="/employeesManagement">員工管理</router-link>
-      <router-link class="link" to="/">工作台設定</router-link>
+      <router-link class="link" to="/workspace">工作台設定</router-link>
     </nav>
   	
 	<router-view></router-view>

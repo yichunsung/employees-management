@@ -25,30 +25,83 @@
 								<span class="detail-title" id ="newsTitle">
 									<!--標題-->
 									查詢出勤狀況
+									<br>
 								</span> 
-								<br>
+								
 								<span class="detail-publishTime" id = "newsTime">
 									<!--時間-->
 								</span>
-								<br>
+								
 								<span class="detail-article" id = "newsArticle">
 									<!--內容-->
 									{{memberRecord.name}}
 									<br>
 									
-									<br>
+									<!--
 									<v2-datepicker-range lang="en" format="yyyy-MM-DD" v-model="memberRecord.date"></v2-datepicker-range>
+									-->
+									開始時間：<br>
+									<input type="number" name="startTimeYY" style="width: 8vw;" v-model="memberRecord.startTimeYY">
+									年
+									<input type="number" name="startTimemm" v-model="memberRecord.startTimemm">
+									月
+									<input type="number" name="startTimeDD" v-model="memberRecord.startTimeDD">
+									日
+									<input type="number" name="startTimeHH" v-model="memberRecord.startTimeHH">
+									時
+									<input type="number" name="startTimeMM" v-model="memberRecord.startTimeMM">
+									分
+									<!--
+									<input type="number" name="startTimeSS" v-model="memberRecord.startTimeSS">
+									秒-->
 									<br>
-									<button>出席狀況查詢</button>
+
+									結束時間：<br>
+									<input type="number" name="endTimeYY" style="width: 8vw;" v-model="memberRecord.endTimeYY">
+									年
+									<input type="number" name="endTimemm" v-model="memberRecord.endTimemm">
+									月
+									<input type="number" name="endTimeDD" v-model="memberRecord.endTimeDD">
+									日
+									<input type="number" name="endTimeHH" v-model="memberRecord.endTimeHH">
+									時
+									<input type="number" name="endTimeMM" v-model="memberRecord.endTimeMM">
+									分
+									<!--
+									<input type="number" name="endTimeSS" v-model="memberRecord.endTimeSS">
+									秒-->
 									<br>
-									
+									<button @click="getMemberRecord()">出席狀況查詢</button>
 									<br>
 
 								</span>
 							</div>
 
 							<div id = "recordP">
-								{{memberRecord.date}}
+								
+								<table id="record">
+									<tr>
+										<th>日期</th>
+								    	<th>狀態</th>
+								    	<th>時間</th>
+								    	<th>備註</th>
+								 	</tr>
+								 	<tr v-for="(recordData, i) in memberRecord.record">
+								    	<td>
+								    		{{new Date(recordData.workDate)}}
+								    	</td>
+								    	<td>
+								    		{{recordData.checkType}}
+								    	</td>
+								    	<td>
+								    		{{new Date(recordData.userCheckTime)}}
+								    	</td>
+								    	<td>
+								    		{{recordData.timeResult}}
+								    	</td>
+							  		</tr>
+								</table>
+								
 							</div>
 
 						</div>
@@ -138,7 +191,9 @@
 				    	</td>
 				    	<td>
 				    		<button style="cursor: pointer;" @click="deleteMember(i)">刪除</button>
+				    		<!--
 				    		<button style="cursor: pointer;">修改</button>
+				    		-->
 				    	</td>
 			  		</tr>
 				</table>
@@ -171,7 +226,24 @@
 				// 員工出缺勤狀況面板
 				memberRecord:{
 					name:'',
-					date:''
+					userId:'',
+
+					startTimeYY: '',
+					startTimemm: '',
+					startTimeDD: '',
+					startTimeHH: '',
+					startTimeMM: '',
+					startTimeSS: '00',
+
+					endTimeYY: '',
+					endTimemm: '',
+					endTimeDD: '',
+					endTimeHH: '',
+					endTimeMM: '',
+					endTimeSS: '00',
+
+					dateString:'',
+					record:[]
 				}
 
 
@@ -195,23 +267,33 @@
 				recordPanel.style.display = 'block';
 
 				_self.memberRecord.name = _self.employeesList[i].name;
+				_self.memberRecord.userId = _self.employeesList[i].userid;
 			},
 			recordWindowClose(){
 				let _self = this;
 				let recordPanel = document.getElementById('recordPanel');
+				_self.memberRecord.record = [];
 
+				_self.memberRecord.startTimeYY = '';
+				_self.memberRecord.startTimemm = '';
+				_self.memberRecord.startTimeDD = '';
+				_self.memberRecord.startTimeHH = '';
+				_self.memberRecord.startTimeMM = '';
+				
+
+				_self.memberRecord.endTimeYY = '';
+				_self.memberRecord.endTimemm = '';
+				_self.memberRecord.endTimeDD = '';
+				_self.memberRecord.endTimeHH = '';
+				_self.memberRecord.endTimeMM = '';
+				
 				recordPanel.style.display = 'none';
-				_self.memberDetail.name = "";
+				
+			},
+			createDate(){
+				let _self = this;
 
-				_self.memberDetail.position = "";
-
-				_self.memberDetail.mobile = "";
-
-				_self.memberDetail.tel = "";
-
-				_self.memberDetail.email = "";
-
-				_self.memberDetail.remark = "";
+				_self.memberRecord.dateString = String(_self.memberRecord.date[0]);
 			},
 			/*
 				員工詳細資料彈出視窗
@@ -270,7 +352,9 @@
 		    		}else{
 		    			//console.log(tokenData);
 		    			_self.token = tokenData.access_token;
+
 		    			let args = "token="+tokenData.access_token;
+		    			
 		    			_self.ajax('get', "/employeesList", args, function(){
 										
 							let employeesList = JSON.parse(this.responseText);
@@ -319,7 +403,7 @@
 						_self.memberDetail.remark = memberDetailData.remark;
 
 
-						console.log(memberDetailData);
+						//console.log(memberDetailData);
 					}
 				});
 			},
@@ -338,6 +422,29 @@
 					 	console.log('error');
 					 }
 				});
+			},
+			getMemberRecord(){
+				let _self = this;
+				let userId = _self.memberRecord.userId;
+
+				// 開始時間
+				let startTime = _self.memberRecord.startTimeYY+'-'+_self.memberRecord.startTimemm+'-'+_self.memberRecord.startTimeDD+' '+_self.memberRecord.startTimeHH+':'+_self.memberRecord.startTimeMM+':'+_self.memberRecord.startTimeSS;
+
+				// 結束時間
+				let endTime = _self.memberRecord.endTimeYY+'-'+_self.memberRecord.endTimemm+'-'+_self.memberRecord.endTimeDD+' '+_self.memberRecord.endTimeHH+':'+_self.memberRecord.endTimeMM+':'+_self.memberRecord.endTimeSS;
+
+				let args = 'token='+_self.token+'&userId='+userId+'&startTime='+startTime+'&endTime='+endTime;
+
+				_self.ajax('get', '/get/record', args, function(){
+
+					let recordData = JSON.parse(this.responseText);
+					if(!recordData){
+						dataErr();
+					}else{
+						_self.memberRecord.record = recordData.recordresult;
+					}
+				});
+
 			}
 			
 			
@@ -431,6 +538,30 @@
 	  background-color: #568ea6;
 	  color: white;
 	}
+
+	#record {
+	  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+	  border-collapse: collapse;
+	  width: 90%;
+	}
+
+	#record td, #record th {
+	  border: 1px solid #ddd;
+	  padding: 8px;
+	}
+
+	#record tr:nth-child(even){background-color: #f2f2f2;}
+
+	#record tr:hover {background-color: #ddd;}
+
+	#record th {
+	  padding-top: 12px;
+	  padding-bottom: 12px;
+	  text-align: left;
+	  background-color: #568ea6;
+	  color: white;
+	}
+
 	input[type=text], select, textarea {
 		width: 30vw;
 		padding: 12px;
@@ -446,8 +577,8 @@
 		resize: vertical;
 	}
 	input[type=number]{
-		width: 30vw;
-		padding: 12px;
+		width: 5vw;
+		padding: 4px;
 		border: 1px solid #ccc;
 		border-radius: 4px;
 		resize: vertical;
@@ -486,7 +617,7 @@
 	}	
 	/*
 	===========================
-		*** NEWS layout
+		*** windows layout
 	===========================
 	*/
 
@@ -606,6 +737,7 @@
 	div.detail-cont > div#recordP{
 		width: 50%;
 		margin-left: 5px;
+		font-size: 14px;
 		color: #333;
 		text-align: center;
 	}
@@ -635,7 +767,7 @@
 	}
 	/*
 	===========================
-		*** NEWS layout End
+		*** windows layout End
 	===========================
 	*/
 

@@ -142,13 +142,21 @@ app.get('/get/memberDetail', function(req, res){
 	});
 });
 
-app.get('/record/', function(req, res){
+app.get('/get/record', function(req, res){
 	let token = req.query.token;
 	let userId = req.query.userId;
+	let startTime = req.query.startTime;
+	let endTime = req.query.endTime;
 	
-	request.get({
-		url:'https://oapi.dingtalk.com/user/get?access_token='+token+'&userid='+userId, 
-		json: true
+	request.post({
+		url:'https://oapi.dingtalk.com/attendance/listRecord?access_token='+token, 
+		json: true,
+		body:{
+		    "userIds": [userId],
+    		"checkDateFrom": startTime,
+    		"checkDateTo": endTime,
+    		"isI18n":"true"
+		}
 		
 	}, function(error, response, body){
 	  // body是回傳的json物件，使用JSON.stringify()轉為json字串
@@ -164,3 +172,4 @@ app.listen(port, function(){
 	console.log("Start in "+port);
 
 });
+
